@@ -1,5 +1,5 @@
 {
-  "name": "optimistdigital/nova-multiselect-field",
+  "name": "nitsnets/nova-multiselect-field",
   "description": "A multiple select field for Laravel Nova.",
   "keywords": [
     "laravel",
@@ -27,13 +27,13 @@
   },
   "autoload": {
     "psr-4": {
-      "OptimistDigital\\MultiselectField\\": "src/"
+      "Nitsnets\\MultiselectField\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "OptimistDigital\\MultiselectField\\FieldServiceProvider"
+        "Nitsnets\\MultiselectField\\FieldServiceProvider"
       ]
     }
   },

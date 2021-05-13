@@ -1,6 +1,6 @@
 <?php
 
-namespace OptimistDigital\MultiselectField;
+namespace Nitsnets\MultiselectField;
 
 use Exception;
 use RuntimeException;
@@ -10,7 +10,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Multiselect extends Field
 {
-    public $component = 'multiselect-field';
+    public $component = 'nitsnets-multiselect-field';
 
     protected $pageResponseResolveCallback;
     protected $saveAsJSON = false;
@@ -19,7 +19,7 @@ class Multiselect extends Field
      * Sets the options available for select.
      *
      * @param  array|callable
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function options($options = [])
     {
@@ -208,7 +208,7 @@ class Multiselect extends Field
      * Set dependency options map as a keyed array of options.
      *
      * @param array $options
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function dependsOnOptions(array $options)
     {
@@ -219,7 +219,7 @@ class Multiselect extends Field
      * Set max selectable value count as a keyed array of numbers.
      *
      * @param array $maxOptions
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function dependsOnMax(array $maxOptions)
     {
@@ -228,9 +228,9 @@ class Multiselect extends Field
 
     /**
      * Sets group name for selects that need to have their values distinct.
-     * 
+     *
      * @param string $group
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function distinct($group = "")
     {
@@ -257,7 +257,7 @@ class Multiselect extends Field
      * Makes the field to manage a BelongsToMany relationship.
      *
      * @param string $resourceClass The Nova Resource class for the other model.
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function belongsToMany($resourceClass, $async = true)
     {
@@ -298,7 +298,7 @@ class Multiselect extends Field
      * Makes the field to manage a BelongsTo relationship.
      *
      * @param string $resourceClass The Nova Resource class for the other model.
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function belongsTo($resourceClass, $async = true)
     {
@@ -356,5 +356,14 @@ class Multiselect extends Field
             return [$associatedResource->getKey() => $associatedResource->title()];
         });
         $this->options($options);
+    }
+
+    /**
+     * @return \OptimistDigital\MultiselectField\Multiselect
+     **/
+    public function showListed()
+    {
+        $this->withMeta(['listed' => true]);
+        return $this;
     }
 }

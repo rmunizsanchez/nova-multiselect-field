@@ -8,6 +8,7 @@
           @input="handleChange"
           @open="handleOpen"
           @search-change="tryToFetchOptions"
+          @select="handleSelect"
           track-by="value"
           label="label"
           :group-label="isOptionGroups ? 'label' : void 0"
@@ -52,10 +53,18 @@
               @mousedown.prevent.stop="value = isMultiselect ? [] : null"
             ></div>
           </template>
+          <template slot="singleLabel" slot-scope="props">  {{ props.option.label}}
+            {{props.option.value}}</template>
+          <template slot="option" slot-scope="props">
+            <nitsnets-multiselect-option :field="field" :value="props.option"/>
+          </template>
+          <template slot="search" slot-scope="props">
+            <nitsnets-multiselect-option :field="field" :value="props.option"/>
+          </template>
         </multiselect>
 
         <!-- Reorder mode field -->
-        <div v-if="reorderMode" class="form-input-bordered py-1">
+        <div v-if="reorderMode && !field.listed" class="form-input-bordered py-1">
           <vue-draggable tag="ul" v-model="value" class="flex flex-col pl-0" style="list-style: none; margin-top: 5px">
             <transition-group>
               <li v-for="(s, i) in selected" :key="i + 0" class="reorder__tag text-sm mb-1 px-2 py-1 text-white">
@@ -66,11 +75,60 @@
         </div>
 
         <div
-          v-if="field.reorderable"
+          v-if="field.reorderable || !field.listed"
           class="ml-auto mt-2 text-sm font-bold text-primary cursor-pointer dim"
           @click="reorderMode = !reorderMode"
         >
           {{ __(reorderMode ? 'novaMultiselect.doneReordering' : 'novaMultiselect.reorder') }}
+        </div>
+
+        <div v-if="listed && !reorderMode" class="py-2">
+          <div v-for="(s, i) in listable" class="block form-input-bordered mb-2">
+            <div v-if="s.label.title">
+              <div class="inline-block w-1/12" v-if="s.label.img">
+                <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code" >
+              </div>
+              <div class="inline-block w-8/12">
+                <span class="whitespace-no-wrap text-base font-semibold">{{ s.label.title }}</span><br>
+                <span class="whitespace-no-wrap text-xs tracking-loose text-80">{{ s.label.url }}</span><br>
+                <span class="whitespace-no-wrap text-base">{{ s.label.code }}</span>
+              </div>
+              <div class="inline-block w-2/12">
+                <i class="cursor-pointer" v-on:click="removeList(i)">
+                  <svg class="w-4" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </i>
+              </div>
+            </div>
+            <span v-else>
+              {{ s.label }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Reorder mode field -->
+        <div v-if="reorderMode && field.listed" class="form-input-bordered py-1">
+          <vue-draggable tag="ul" v-model="listable" class="flex flex-col pl-0" style="list-style: none; margin-top: 5px">
+            <transition-group>
+              <li v-for="(s, i) in listable" :key="i + 0" class="reorder__tag text-sm mb-1 px-2 py-1 text-white">
+
+                  <div v-if="s.label.title">
+                    <div class="inline-block w-1/12" v-if="s.label.img">
+                      <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code" >
+                    </div>
+                    <div class="inline-block w-8/12">
+                      <span class="whitespace-no-wrap text-base font-semibold">{{ s.label.title }}</span><br>
+                      <span class="whitespace-no-wrap text-xs tracking-loose text-80">{{ s.label.url }}</span><br>
+                      <span class="whitespace-no-wrap text-base">{{ s.label.code }}</span>
+                    </div>
+                  </div>
+                  <span v-else>
+                  {{ s.label }}
+                  </span>
+              </li>
+            </transition-group>
+          </vue-draggable>
         </div>
       </div>
     </template>
@@ -99,6 +157,8 @@ export default {
     distinctValues: [],
     isLoading: false,
     isInitialized: false,
+    listable : [],
+    listed: false
   }),
 
   mounted() {
@@ -107,7 +167,7 @@ export default {
     if (this.field.dependsOn) {
       this.options = [];
 
-      Nova.$on(`multiselect-${this.safeDependsOnAttribute}-input`, values => {
+      Nova.$on(`nts-multiselect-${this.safeDependsOnAttribute}-input`, values => {
         values = Array.isArray(values) ? values : [values]; // Handle singleSelect
 
         // Clear options
@@ -151,20 +211,24 @@ export default {
 
     if (this.field.distinct) {
       // Handle distinct callback.
-      Nova.$on(`multiselect-${this.field.distinct}-distinct`, callback => {
+      Nova.$on(`nts-multiselect-${this.field.distinct}-distinct`, callback => {
         return callback(this.value);
       });
     }
 
+    if (this.field.listed) {
+      this.listed = true
+    }
+
     // Emit initial value
     this.$nextTick(() => {
-      Nova.$emit(`multiselect-${this.field.attribute}-input`, this.value);
+      Nova.$emit(`nts-multiselect-${this.field.attribute}-input`, this.value);
     });
   },
 
   destroyed() {
     window.removeEventListener('scroll', this.repositionDropdown);
-    if (this.field.distinct) Nova.$off(`multiselect-${this.field.distinct}-distinct`);
+    if (this.field.distinct) Nova.$off(`nts-multiselect-${this.field.distinct}-distinct`);
   },
 
   computed: {
@@ -189,13 +253,24 @@ export default {
     setInitialValue() {
       if (this.isMultiselect) {
         const valuesArray = this.getInitialFieldValuesArray();
-        this.value = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
+        if (this.listed) {
+          this.listable = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
+        } else {
+          this.value = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
+        }
       } else {
-        this.value = this.getValueFromOptions(this.field.value);
+        if (this.listed) {
+          this.listable = this.getValueFromOptions(this.field.value);
+        } else {
+          this.value = this.getValueFromOptions(this.field.value);
+        }
       }
     },
 
     fill(formData) {
+      if (this.listed) {
+        this.value = this.listable;
+      }
       if (this.isMultiselect) {
         if (this.value && this.value.length) {
           this.value.forEach((v, i) => {
@@ -210,9 +285,14 @@ export default {
     },
 
     handleChange(value) {
-      this.value = value;
-      this.$nextTick(() => this.repositionDropdown());
-      Nova.$emit(`multiselect-${this.field.attribute}-input`, this.value);
+      if (this.listed) {
+        this.value = [];
+      } else {
+        this.value = value;
+      }
+
+      this.$nextTick(() => this.repositionDropdown());2298
+      Nova.$emit(`nts-multiselect-${this.field.attribute}-input`, this.value);
     },
 
     handleOpen() {
@@ -229,7 +309,7 @@ export default {
       this.distinctValues = [];
 
       // Fetch other select values in current distinct group
-      Nova.$emit(`multiselect-${this.field.distinct}-distinct`, values => {
+      Nova.$emit(`nts-multiselect-${this.field.distinct}-distinct`, values => {
         // Validate that current value is not disabled.
         if (values !== this.selected) {
           // Add already used values to distinctValues
@@ -337,6 +417,21 @@ export default {
         this.asyncOptions = [];
       }
     },
+    handleSelect(selected,id) {
+      if (this.isMultiselect) {
+        if (this.listable.findIndex(function (o) {
+          return o.value === selected.value
+        }) === -1) {
+          this.listable.push(selected)
+        }
+      } else {
+        this.listable = [];
+        this.listable.push(selected)
+      }
+    },
+    removeList(id) {
+      this.listable.splice(id, 1);
+    }
   },
 };
 </script>
