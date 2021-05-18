@@ -243,6 +243,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
 
 
 
@@ -401,7 +402,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var _this3 = this;
 
       if (this.listed) {
-        this.value = [];
+        this.value = value;
       } else {
         this.value = value;
       }
@@ -775,6 +776,45 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ['field', 'value']
+});
+
+/***/ }),
+
 /***/ "./resources/js/mixins/HandlesFieldValue.js":
 /*!**************************************************!*\
   !*** ./resources/js/mixins/HandlesFieldValue.js ***!
@@ -825,6 +865,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     getValueFromOptions: function getValueFromOptions(value) {
       var options = this.field.options || [];
+      console.log(options);
 
       if (this.field.dependsOn) {
         var valueGroups = Object.values(this.field.dependsOnOptions || {});
@@ -921,6 +962,8 @@ Nova.booting(function (Vue, router, store) {
   if (!Vue.options.components['nova-nitsnets-multiselect-detail-field-value']) {
     Vue.component('nova-nitsnets-multiselect-detail-field-value', __webpack_require__(/*! ./components/NovaMultiselectDetailFieldValue */ "./resources/js/components/NovaMultiselectDetailFieldValue.vue").default);
   }
+
+  Vue.component('nova-nitsnets-multiselect-detail-one-field-value', __webpack_require__(/*! ./components/NovaMultiselectDetailOneFieldValue */ "./resources/js/components/NovaMultiselectDetailOneFieldValue.vue").default);
 });
 
 /***/ }),
@@ -37070,6 +37113,45 @@ component.options.__file = "resources/js/components/NovaMultiselectDetailFieldVa
 
 /***/ }),
 
+/***/ "./resources/js/components/NovaMultiselectDetailOneFieldValue.vue":
+/*!************************************************************************!*\
+  !*** ./resources/js/components/NovaMultiselectDetailOneFieldValue.vue ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _NovaMultiselectDetailOneFieldValue_vue_vue_type_template_id_62e98ae4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NovaMultiselectDetailOneFieldValue.vue?vue&type=template&id=62e98ae4& */ "./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=template&id=62e98ae4&");
+/* harmony import */ var _NovaMultiselectDetailOneFieldValue_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NovaMultiselectDetailOneFieldValue.vue?vue&type=script&lang=js& */ "./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _NovaMultiselectDetailOneFieldValue_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _NovaMultiselectDetailOneFieldValue_vue_vue_type_template_id_62e98ae4___WEBPACK_IMPORTED_MODULE_0__.render,
+  _NovaMultiselectDetailOneFieldValue_vue_vue_type_template_id_62e98ae4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/NovaMultiselectDetailOneFieldValue.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/DetailField.vue?vue&type=script&lang=js&":
 /*!**************************************************************************!*\
   !*** ./resources/js/components/DetailField.vue?vue&type=script&lang=js& ***!
@@ -37163,6 +37245,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NovaMultiselectDetailFieldValue_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./NovaMultiselectDetailFieldValue.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/NovaMultiselectDetailFieldValue.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NovaMultiselectDetailFieldValue_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
+/***/ "./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************!*\
+  !*** ./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NovaMultiselectDetailOneFieldValue_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./NovaMultiselectDetailOneFieldValue.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NovaMultiselectDetailOneFieldValue_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
 
 /***/ }),
 
@@ -37281,6 +37379,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=template&id=62e98ae4&":
+/*!*******************************************************************************************************!*\
+  !*** ./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=template&id=62e98ae4& ***!
+  \*******************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NovaMultiselectDetailOneFieldValue_vue_vue_type_template_id_62e98ae4___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NovaMultiselectDetailOneFieldValue_vue_vue_type_template_id_62e98ae4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NovaMultiselectDetailOneFieldValue_vue_vue_type_template_id_62e98ae4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./NovaMultiselectDetailOneFieldValue.vue?vue&type=template&id=62e98ae4& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=template&id=62e98ae4&");
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/DetailField.vue?vue&type=template&id=0224618e&":
 /*!***********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/DetailField.vue?vue&type=template&id=0224618e& ***!
@@ -37308,6 +37423,10 @@ var render = function() {
           _vm.isMultiselect
             ? _c("nova-nitsnets-multiselect-detail-field-value", {
                 attrs: { field: _vm.field, values: _vm.values }
+              })
+            : !_vm.isMultiselect && _vm.value.label.url
+            ? _c("nova-nitsnets-multiselect-detail-one-field-value", {
+                attrs: { field: _vm.field, value: _vm.value }
               })
             : _c("div", [_vm._v(_vm._s((_vm.value && _vm.value.label) || "—"))])
         ],
@@ -37404,12 +37523,9 @@ var render = function() {
                           key: "singleLabel",
                           fn: function(props) {
                             return [
-                              _vm._v(
-                                "  " +
-                                  _vm._s(props.option.label) +
-                                  "\n          " +
-                                  _vm._s(props.option.value)
-                              )
+                              _c("nitsnets-multiselect-option", {
+                                attrs: { field: _vm.field, value: props.option }
+                              })
                             ]
                           }
                         },
@@ -37436,7 +37552,7 @@ var render = function() {
                       ],
                       null,
                       false,
-                      2820452282
+                      3449638215
                     )
                   },
                   [
@@ -37963,7 +38079,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.value.label.title
+  return _vm.value.label.url
     ? _c("div", [
         _vm.value.label.img
           ? _c("div", { staticClass: "inline-block w-8" }, [
@@ -38038,7 +38154,7 @@ var render = function() {
                     "border-b border-50 cursor-text font-mono text-sm py-2 px-4"
                 },
                 [
-                  value.label.title
+                  value.label.url
                     ? _c("div", { staticClass: "block" }, [
                         _c("div", { staticClass: "inline-block w-1/12" }, [
                           value.label.img
@@ -38092,6 +38208,94 @@ var render = function() {
               )
             }),
             0
+          )
+        ]
+      )
+    : _c("div", [_vm._v("—")])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=template&id=62e98ae4&":
+/*!**********************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/NovaMultiselectDetailOneFieldValue.vue?vue&type=template&id=62e98ae4& ***!
+  \**********************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.value.label.url
+    ? _c(
+        "div",
+        { staticClass: "relative rounded-lg bg-white shadow border border-60" },
+        [
+          _c(
+            "div",
+            { staticClass: "overflow-hidden rounded-b-lg rounded-t-lg" },
+            [
+              _vm.value.label.url
+                ? _c("div", { staticClass: "block" }, [
+                    _c("div", { staticClass: "inline-block w-1/12" }, [
+                      _vm.value.label.img
+                        ? _c("img", {
+                            directives: [
+                              { name: "viewer", rawName: "v-viewer" }
+                            ],
+                            staticClass: "w-auto",
+                            attrs: {
+                              src: _vm.value.label.img,
+                              alt: _vm.value.label.code
+                            }
+                          })
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "inline-block w-8/12" }, [
+                      _c(
+                        "span",
+                        {
+                          staticClass:
+                            "whitespace-no-wrap text-base font-semibold"
+                        },
+                        [_vm._v(_vm._s(_vm.value.label.title))]
+                      ),
+                      _c("br"),
+                      _vm._v(" "),
+                      _c(
+                        "span",
+                        {
+                          staticClass:
+                            "whitespace-no-wrap text-xs tracking-loose text-80"
+                        },
+                        [_vm._v(_vm._s(_vm.value.label.url))]
+                      ),
+                      _c("br"),
+                      _vm._v(" "),
+                      _c(
+                        "span",
+                        { staticClass: "whitespace-no-wrap text-base" },
+                        [_vm._v(_vm._s(_vm.value.label.code))]
+                      )
+                    ])
+                  ])
+                : _c("span", [
+                    _vm._v(
+                      "\n          " + _vm._s(_vm.value.label) + "\n        "
+                    )
+                  ])
+            ]
           )
         ]
       )

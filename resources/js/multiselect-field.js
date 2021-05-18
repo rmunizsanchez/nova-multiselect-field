@@ -14,4 +14,9 @@ Nova.booting((Vue, router, store) => {
       require('./components/NovaMultiselectDetailFieldValue').default
     );
   }
+
+  Vue.component(
+    'nova-nitsnets-multiselect-detail-one-field-value',
+    require('./components/NovaMultiselectDetailOneFieldValue').default
+  );
 });

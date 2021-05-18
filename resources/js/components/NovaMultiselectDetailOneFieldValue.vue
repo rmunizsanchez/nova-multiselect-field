@@ -1,8 +1,7 @@
 <template>
-  <div class="relative rounded-lg bg-white shadow border border-60" v-if="values">
+  <div class="relative rounded-lg bg-white shadow border border-60" v-if="value.label.url">
     <div class="overflow-hidden rounded-b-lg rounded-t-lg">
-      <div class="border-b border-50 cursor-text font-mono text-sm py-2 px-4" v-for="(value, i) of values" :key="i">
-          <div v-if="value.label.url" class="block">
+        <div v-if="value.label.url" class="block">
             <div class="inline-block w-1/12">
               <img v-viewer class="w-auto" v-if="value.label.img" :src="value.label.img" :alt="value.label.code" >
             </div>
@@ -16,7 +15,6 @@
             {{ value.label }}
           </span>
       </div>
-    </div>
   </div>
 
   <div v-else>—</div>
@@ -24,6 +22,6 @@
 
 <script>
 export default {
-  props: ['field', 'values'],
+  props: ['field', 'value'],
 };
 </script>

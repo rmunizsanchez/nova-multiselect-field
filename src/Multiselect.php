@@ -21,14 +21,20 @@ class Multiselect extends Field
      * @param  array|callable
      * @return \Nitsnets\MultiselectField\Multiselect
      **/
-    public function options($options = [])
+    public function options($options = [], $grouped = true)
     {
-        if (is_callable($options)) $options = call_user_func($options);
+        if (is_callable($options)) {
+            $options = call_user_func($options);
+        }
         $options = collect($options ?? []);
 
-        $isOptionGroup = $options->contains(function ($label, $value) {
-            return is_array($label);
-        });
+        if ($grouped) {
+            $isOptionGroup = $options->contains(function ($label, $value) {
+                return is_array($label);
+            });
+        } else {
+            $isOptionGroup = false;
+        }
 
         if ($isOptionGroup) {
             $_options = $options
@@ -45,7 +51,6 @@ class Multiselect extends Field
             return $this->withMeta(['options' => $_options]);
         }
 
-
         return $this->withMeta([
             'options' => $options->map(function ($label, $value) {
                 return ['label' => $label, 'value' => $value];
@@ -53,32 +58,37 @@ class Multiselect extends Field
         ]);
     }
 
-    public function api($path, $resourceClass)
+    public function api($path, $resourceClass, $resolving = true)
     {
         if (empty($resourceClass)) throw new Exception('Multiselect requires resourceClass, none provided.');
         if (empty($path)) throw new Exception('Multiselect requires apiUrl, none provided.');
 
-        $this->resolveUsing(function ($value) use ($resourceClass) {
-            $this->options([]);
-            $value = array_values((array)$value);
+        if ($resolving) {
+            $this->resolveUsing(function ($value) use ($resourceClass) {
+                $this->options([]);
+                $value = array_values((array)$value);
+                if (empty($value)) {
+                    return $value;
+                }
 
-            if (empty($value)) return $value;
+                // Handle translatable/collection where values are an array of arrays
+                if (is_array($value) && is_array($value[0] ?? null)) {
+                    $value = collect($value)->flatten(1)->toArray();
+                }
 
-            // Handle translatable/collection where values are an array of arrays
-            if (is_array($value) && is_array($value[0] ?? null)) {
-                $value = collect($value)->flatten(1)->toArray();
-            }
 
-            try {
-                $modelObj = $resourceClass::newModel();
-                $models = $modelObj::whereIn($modelObj->getKeyName(), $value)->get();
+                try {
+                    $modelObj = $resourceClass::newModel();
+                    $models = $modelObj::whereIn($modelObj->getKeyName(), $value)->get();
 
-                $this->setOptionsFromModels($models, $resourceClass);
-            } catch (Exception $e) {
-            }
+                    $this->setOptionsFromModels($models, $resourceClass);
+                } catch (Exception $e) {
+                    \Log::error($e->getMessage());
+                }
 
-            return $value;
-        });
+                return $value;
+            });
+        }
 
         return $this->withMeta(['apiUrl' => $path, 'labelKey' => $resourceClass::$title]);
     }
@@ -365,5 +375,11 @@ class Multiselect extends Field
     {
         $this->withMeta(['listed' => true]);
         return $this;
+    }
+
+    public function __construct($name, $attribute = null, callable $resolveCallback = null)
+    {
+        parent::__construct($name, $attribute, $resolveCallback);
+        $this->withMeta(['listed' => false, 'reorderable' => false]);
     }
 }

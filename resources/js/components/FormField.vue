@@ -53,8 +53,9 @@
               @mousedown.prevent.stop="value = isMultiselect ? [] : null"
             ></div>
           </template>
-          <template slot="singleLabel" slot-scope="props">  {{ props.option.label}}
-            {{props.option.value}}</template>
+          <template slot="singleLabel" slot-scope="props">
+            <nitsnets-multiselect-option :field="field" :value="props.option"/>
+          </template>
           <template slot="option" slot-scope="props">
             <nitsnets-multiselect-option :field="field" :value="props.option"/>
           </template>
@@ -286,7 +287,7 @@ export default {
 
     handleChange(value) {
       if (this.listed) {
-        this.value = [];
+        this.value = value;
       } else {
         this.value = value;
       }

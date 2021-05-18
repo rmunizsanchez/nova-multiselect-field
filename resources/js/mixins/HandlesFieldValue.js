@@ -32,6 +32,7 @@ export default {
     getValueFromOptions(value) {
       let options = this.field.options || [];
 
+      console.log(options);
       if (this.field.dependsOn) {
         const valueGroups = Object.values(this.field.dependsOnOptions || {});
         options = [];
