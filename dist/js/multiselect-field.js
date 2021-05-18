@@ -40,13 +40,9 @@ __webpack_require__.r(__webpack_exports__);
   props: ['resource', 'resourceName', 'resourceId', 'field'],
   computed: {
     values: function values() {
-      var _this = this;
-
       var valuesArray = this.getInitialFieldValuesArray();
       if (!valuesArray || !valuesArray.length) return;
-      return valuesArray.map(this.getValueFromOptions).filter(Boolean).map(function (val) {
-        return "".concat(_this.isOptionGroups ? "[".concat(val.group, "] ") : '').concat(val.label);
-      });
+      return valuesArray.map(this.getValueFromOptions).filter(Boolean);
     },
     value: function value() {
       return this.getValueFromOptions(this.field.value);
@@ -366,18 +362,20 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       if (this.isMultiselect) {
         var valuesArray = this.getInitialFieldValuesArray();
 
-        if (this.listed) {
+        if (this.field.listed) {
           this.listable = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
         } else {
           this.value = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
         }
       } else {
-        if (this.listed) {
+        if (this.field.listed) {
           this.listable = this.getValueFromOptions(this.field.value);
         } else {
           this.value = this.getValueFromOptions(this.field.value);
         }
       }
+
+      console.log(this.listable);
     },
     fill: function fill(formData) {
       var _this2 = this;
@@ -402,7 +400,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var _this3 = this;
 
       if (this.listed) {
-        this.value = value;
+        this.value = [];
       } else {
         this.value = value;
       }
@@ -865,7 +863,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     getValueFromOptions: function getValueFromOptions(value) {
       var options = this.field.options || [];
-      console.log(options);
 
       if (this.field.dependsOn) {
         var valueGroups = Object.values(this.field.dependsOnOptions || {});
@@ -37812,7 +37809,7 @@ var render = function() {
                 )
               : _vm._e(),
             _vm._v(" "),
-            _vm.reorderMode && _vm.field.listed
+            _vm.reorderMode && _vm.listed
               ? _c(
                   "div",
                   { staticClass: "form-input-bordered py-1" },
@@ -37982,7 +37979,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.value.label.title
+  return _vm.value.label.url
     ? _c("div", [
         _vm.value.label.img
           ? _c("div", { staticClass: "inline-block w-1/12" }, [
@@ -38079,7 +38076,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.value.label.url
+  return _vm.value.label.url != ""
     ? _c("div", [
         _vm.value.label.img
           ? _c("div", { staticClass: "inline-block w-8" }, [
@@ -38112,7 +38109,7 @@ var render = function() {
           ])
         ])
       ])
-    : _c("span", [_vm._v("\n    " + _vm._s(_vm.value.label) + "\n")])
+    : _c("span", [_vm._v("\n        " + _vm._s(_vm.value.value) + "\n")])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -38145,7 +38142,7 @@ var render = function() {
           _c(
             "div",
             { staticClass: "overflow-hidden rounded-b-lg rounded-t-lg" },
-            _vm._l(_vm.values, function(value, i) {
+            _vm._l(_vm.values, function(item, i) {
               return _c(
                 "div",
                 {
@@ -38154,18 +38151,18 @@ var render = function() {
                     "border-b border-50 cursor-text font-mono text-sm py-2 px-4"
                 },
                 [
-                  value.label.url
+                  item.label
                     ? _c("div", { staticClass: "block" }, [
                         _c("div", { staticClass: "inline-block w-1/12" }, [
-                          value.label.img
+                          item.label.img
                             ? _c("img", {
                                 directives: [
                                   { name: "viewer", rawName: "v-viewer" }
                                 ],
                                 staticClass: "w-auto",
                                 attrs: {
-                                  src: value.label.img,
-                                  alt: value.label.code
+                                  src: item.label.img,
+                                  alt: item.label.code
                                 }
                               })
                             : _vm._e()
@@ -38178,7 +38175,7 @@ var render = function() {
                               staticClass:
                                 "whitespace-no-wrap text-base font-semibold"
                             },
-                            [_vm._v(_vm._s(value.label.title))]
+                            [_vm._v(_vm._s(item.label.title))]
                           ),
                           _c("br"),
                           _vm._v(" "),
@@ -38188,21 +38185,19 @@ var render = function() {
                               staticClass:
                                 "whitespace-no-wrap text-xs tracking-loose text-80"
                             },
-                            [_vm._v(_vm._s(value.label.url))]
+                            [_vm._v(_vm._s(item.label.url))]
                           ),
                           _c("br"),
                           _vm._v(" "),
                           _c(
                             "span",
                             { staticClass: "whitespace-no-wrap text-base" },
-                            [_vm._v(_vm._s(value.label.code))]
+                            [_vm._v(_vm._s(item.label.code))]
                           )
                         ])
                       ])
                     : _c("span", [
-                        _vm._v(
-                          "\n          " + _vm._s(value.label) + "\n        "
-                        )
+                        _vm._v("\n          " + _vm._s(item) + "\n        ")
                       ])
                 ]
               )

@@ -109,7 +109,7 @@
         </div>
 
         <!-- Reorder mode field -->
-        <div v-if="reorderMode && field.listed" class="form-input-bordered py-1">
+        <div v-if="reorderMode && listed" class="form-input-bordered py-1">
           <vue-draggable tag="ul" v-model="listable" class="flex flex-col pl-0" style="list-style: none; margin-top: 5px">
             <transition-group>
               <li v-for="(s, i) in listable" :key="i + 0" class="reorder__tag text-sm mb-1 px-2 py-1 text-white">
@@ -221,6 +221,7 @@ export default {
       this.listed = true
     }
 
+
     // Emit initial value
     this.$nextTick(() => {
       Nova.$emit(`nts-multiselect-${this.field.attribute}-input`, this.value);
@@ -254,18 +255,21 @@ export default {
     setInitialValue() {
       if (this.isMultiselect) {
         const valuesArray = this.getInitialFieldValuesArray();
-        if (this.listed) {
+
+        if (this.field.listed) {
           this.listable = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
         } else {
           this.value = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
         }
       } else {
-        if (this.listed) {
+        if (this.field.listed) {
           this.listable = this.getValueFromOptions(this.field.value);
         } else {
           this.value = this.getValueFromOptions(this.field.value);
         }
       }
+
+      console.log(this.listable);
     },
 
     fill(formData) {
@@ -287,7 +291,7 @@ export default {
 
     handleChange(value) {
       if (this.listed) {
-        this.value = value;
+        this.value = [];
       } else {
         this.value = value;
       }

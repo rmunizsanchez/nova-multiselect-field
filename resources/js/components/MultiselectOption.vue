@@ -1,5 +1,5 @@
 <template>
-  <div v-if="value.label.url">
+  <div v-if="value.label.url != ''">
     <div class="inline-block w-8" v-if="value.label.img">
       <img class="w-auto"  :src="value.label.img" :alt="value.label.code" >
     </div>
@@ -10,7 +10,7 @@
     </div>
   </div>
   <span v-else>
-      {{ value.label }}
+          {{ value.value}}
   </span>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="value.label.title">
+  <div v-if="value.label.url">
     <div class="inline-block w-1/12" v-if="value.label.img">
       <img v-viewer class="w-auto"  :src="value.label.img" :alt="value.label.code" >
     </div>
@@ -27,6 +27,4 @@ export default {
     $this.parent.removeList(i);
   }
 };
-
-
 </script>
