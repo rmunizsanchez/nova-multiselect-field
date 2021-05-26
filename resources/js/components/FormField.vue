@@ -76,7 +76,7 @@
         </div>
 
         <div
-          v-if="field.reorderable || !field.listed"
+          v-if="field.reorderable"
           class="ml-auto mt-2 text-sm font-bold text-primary cursor-pointer dim"
           @click="reorderMode = !reorderMode"
         >
@@ -268,8 +268,6 @@ export default {
           this.value = this.getValueFromOptions(this.field.value);
         }
       }
-
-      console.log(this.listable);
     },
 
     fill(formData) {
