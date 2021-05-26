@@ -58,6 +58,14 @@ class Multiselect extends Field
         ]);
     }
 
+    /**
+     * @param      $path
+     * @param      $resourceClass
+     * @param bool $resolving
+     *
+     * @return \Nitsnets\MultiselectField\Multiselect
+     * @throws \Exception
+     */
     public function api($path, $resourceClass, $resolving = true)
     {
         if (empty($resourceClass)) throw new Exception('Multiselect requires resourceClass, none provided.');
@@ -93,10 +101,17 @@ class Multiselect extends Field
         return $this->withMeta(['apiUrl' => $path, 'labelKey' => $resourceClass::$title]);
     }
 
-    public function asyncResource($resourceClass)
+    /**
+     * @param      $resourceClass
+     * @param bool $resolving
+     *
+     * @return \Nitsnets\MultiselectField\Multiselect
+     * @throws \Exception
+     */
+    public function asyncResource($resourceClass, $resolving = true)
     {
         $apiUrl = "/nova-api/{$resourceClass::uriKey()}";
-        return $this->api($apiUrl, $resourceClass);
+        return $this->api($apiUrl, $resourceClass, $resolving);
     }
 
     protected function resolveAttribute($resource, $attribute)
@@ -126,7 +141,7 @@ class Multiselect extends Field
      * Allows the field to save an actual JSON array to a SQL JSON column.
      *
      * @param bool $saveAsJSON
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function saveAsJSON($saveAsJSON = true)
     {
@@ -138,7 +153,7 @@ class Multiselect extends Field
      * Sets the max number of options the user can select.
      *
      * @param int $max
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function max($max)
     {
@@ -149,7 +164,7 @@ class Multiselect extends Field
      * Sets the placeholder value displayed on the field.
      *
      * @param string $placeholder
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function placeholder($placeholder)
     {
@@ -160,7 +175,7 @@ class Multiselect extends Field
      * Sets the maximum number of options displayed at once.
      *
      * @param int $optionsLimit
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function optionsLimit($optionsLimit)
     {
@@ -171,7 +186,7 @@ class Multiselect extends Field
      * Enables or disables reordering of the field values.
      *
      * @param bool $reorderable
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function reorderable($reorderable = true)
     {
@@ -184,7 +199,7 @@ class Multiselect extends Field
      * This forces the value saved to be a single value and not an array.
      *
      * @param bool $singleSelect
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function singleSelect($singleSelect = true)
     {
@@ -196,7 +211,7 @@ class Multiselect extends Field
      * user to select the whole group at once.
      *
      * @param bool $groupSelect
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function groupSelect($groupSelect = true)
     {
@@ -207,7 +222,7 @@ class Multiselect extends Field
      * Enable other-field dependency.
      *
      * @param string $otherFieldName
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function dependsOn($otherFieldName)
     {
@@ -222,7 +237,8 @@ class Multiselect extends Field
      **/
     public function dependsOnOptions(array $options)
     {
-        return $this->withMeta(['dependsOnOptions' => $options]);
+        $this->withMeta(['dependsOnOptions' => $options]);
+        return $this;
     }
 
     /**
@@ -233,7 +249,8 @@ class Multiselect extends Field
      **/
     public function dependsOnMax(array $maxOptions)
     {
-        return $this->withMeta(['dependsOnMax' => $maxOptions]);
+        $this->withMeta(['dependsOnMax' => $maxOptions]);
+        return $this;
     }
 
     /**
@@ -248,6 +265,12 @@ class Multiselect extends Field
         return $this->withMeta(['distinct' => $group]);
     }
 
+    /**
+     * @param $value
+     * @param $templateModel
+     *
+     * @return false|mixed|null
+     */
     public function resolveResponseValue($value, $templateModel)
     {
         $parsedValue = isset($value) ? ($this->saveAsJSON ? $value : json_decode($value)) : null;
@@ -256,6 +279,11 @@ class Multiselect extends Field
             : $parsedValue;
     }
 
+    /**
+     * @param callable $resolveCallback
+     *
+     * @return \Nitsnets\MultiselectField\Multiselect
+     */
     public function resolveForPageResponseUsing(callable $resolveCallback)
     {
         $this->pageResponseResolveCallback = $resolveCallback;
@@ -348,6 +376,11 @@ class Multiselect extends Field
         return $this;
     }
 
+    /**
+     * @param bool $clearOnSelect
+     *
+     * @return \Nitsnets\MultiselectField\Multiselect
+     */
     public function clearOnSelect($clearOnSelect = true)
     {
         return $this->withMeta(['clearOnSelect' => $clearOnSelect]);
@@ -369,7 +402,7 @@ class Multiselect extends Field
     }
 
     /**
-     * @return \OptimistDigital\MultiselectField\Multiselect
+     * @return \Nitsnets\MultiselectField\Multiselect
      **/
     public function showListed()
     {
