@@ -12,4 +12,19 @@
   &.border-danger > .multiselect__tags {
     border-color: var(--danger);
   }
+
+  .multiselect__option--highlight,
+  .multiselect__option--highlight:after,
+  .multiselect__tag {
+    background: rgb(244, 247, 250);
+  }
+
+  .multiselect__option--highlight {
+    color: rgb(17, 24, 39);
+  }
+
+  .multiselect__spinner:after,
+  .multiselect__spinner:before {
+    border-top-color: #6366F1;
+  }
 }

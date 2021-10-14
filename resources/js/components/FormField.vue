@@ -84,17 +84,17 @@
         </div>
 
         <div v-if="listed && !reorderMode" class="py-2">
-          <div v-for="(s, i) in listable" class="block form-input-bordered mb-2">
+          <div v-for="(s, i) in listable" class="block form-input-bordered mb-2 p-3 pb-2 relative">
             <div v-if="s.label.title">
-              <div class="inline-block w-1/12" v-if="s.label.img">
-                <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code" >
+              <div class="inline-block w-16 pr-2" v-if="s.label.img">
+                <img v-viewer class="w-auto" :src="s.label.img" :alt="s.label.code">
               </div>
-              <div class="inline-block w-8/12">
-                <span class="whitespace-no-wrap text-base font-semibold">{{ s.label.title }}</span><br>
-                <span class="whitespace-no-wrap text-xs tracking-loose text-80">{{ s.label.url }}</span><br>
-                <span class="whitespace-no-wrap text-base">{{ s.label.code }}</span>
+              <div class="inline-block w-10/12 align-top">
+                <span class="whitespace-no-wrap text-gray-900 text-sm font-medium">{{ s.label.title }}</span><br>
+                <span class="whitespace-no-wrap mt-1 text-gray-500 text-xs">{{ s.label.url }}</span><br>
+                <span class="whitespace-no-wrap mt-1 text-gray-500 text-sm">{{ s.label.code }}</span>
               </div>
-              <div class="inline-block w-2/12">
+              <div class="absolute top-3 right-3">
                 <i class="cursor-pointer" v-on:click="removeList(i)">
                   <svg class="w-4" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -112,16 +112,16 @@
         <div v-if="reorderMode && listed" class="form-input-bordered py-1">
           <vue-draggable tag="ul" v-model="listable" class="flex flex-col pl-0" style="list-style: none; margin-top: 5px">
             <transition-group>
-              <li v-for="(s, i) in listable" :key="i + 0" class="reorder__tag text-sm mb-1 px-2 py-1 text-white">
+              <li v-for="(s, i) in listable" :key="i + 0" class="reorder__tag text-sm mb-1 px-2 py-1 pb-2 text-white">
 
                   <div v-if="s.label.title">
-                    <div class="inline-block w-1/12" v-if="s.label.img">
-                      <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code" >
+                    <div class="inline-block w-16 pr-2" v-if="s.label.img">
+                      <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code">
                     </div>
-                    <div class="inline-block w-8/12">
-                      <span class="whitespace-no-wrap text-base font-semibold">{{ s.label.title }}</span><br>
-                      <span class="whitespace-no-wrap text-xs tracking-loose text-80">{{ s.label.url }}</span><br>
-                      <span class="whitespace-no-wrap text-base">{{ s.label.code }}</span>
+                    <div class="inline-block w-10/12 align-top">
+                      <span class="whitespace-no-wrap text-gray-900 text-sm font-medium">{{ s.label.title }}</span><br>
+                      <span class="whitespace-no-wrap mt-1 text-gray-500 text-xs">{{ s.label.url }}</span><br>
+                      <span class="whitespace-no-wrap mt-1 text-gray-500 text-sm">{{ s.label.code }}</span>
                     </div>
                   </div>
                   <span v-else>
