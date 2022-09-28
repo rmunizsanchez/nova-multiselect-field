@@ -15,6 +15,19 @@ class Multiselect extends Field
     protected $pageResponseResolveCallback;
     protected $saveAsJSON = false;
 
+    /* *
+     * Enable import from CSV files.
+     *
+     * @ param bool $activeImport
+     * @ return \Nitsnets\MultiselectField\Multiselect
+     **/
+
+    public function activeImport($activeImport = true)
+    {
+        return $this->withMeta(['activeImport' => $activeImport]);
+    }
+
+
     /**
      * Sets the options available for select.
      *
@@ -99,6 +112,20 @@ class Multiselect extends Field
         }
 
         return $this->withMeta(['apiUrl' => $path, 'labelKey' => $resourceClass::$title]);
+    }
+
+     /**
+     * @ param      $path
+     *
+     * @ return \Nitsnets\MultiselectField\Multiselect
+     * @ throws \Exception
+     * **/
+    public function apiImport($path)
+    {
+        if (empty($path)) throw new Exception('Multiselect requires apiImportUrl, none provided.');
+
+        \Log::error($path);
+        return $this->withMeta(['apiImportUrl' => $path]);
     }
 
     /**
@@ -413,6 +440,6 @@ class Multiselect extends Field
     public function __construct($name, $attribute = null, callable $resolveCallback = null)
     {
         parent::__construct($name, $attribute, $resolveCallback);
-        $this->withMeta(['listed' => false, 'reorderable' => false]);
+        $this->withMeta(['listed' => false, 'reorderable' => false, 'activeImport' => false]);
     }
 }

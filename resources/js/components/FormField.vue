@@ -1,7 +1,8 @@
 <template>
   <default-field :field="field" :showHelpText="showHelpText" :errors="errors">
     <template slot="field">
-      <div class="multiselect-field flex flex-col">
+
+      <div class="multiselect-field flex flex-col" :class="">
         <!-- Multi select field -->
         <multiselect
           v-if="!reorderMode"
@@ -18,7 +19,7 @@
           :value="selected"
           :options="field.apiUrl ? asyncOptions : computedOptions"
           :internal-search="!field.apiUrl"
-          :class="errorClasses"
+          :class="field.activeImport?'import':''"
           :disabled="isReadonly"
           :placeholder="field.placeholder || field.name"
           :close-on-select="field.max === 1 || !isMultiselect"
@@ -83,6 +84,7 @@
           {{ __(reorderMode ? 'novaMultiselect.doneReordering' : 'novaMultiselect.reorder') }}
         </div>
 
+        <!-- item's list -->
         <div v-if="listed && !reorderMode" class="py-2">
           <div v-for="(s, i) in listable" class="block form-input-bordered mb-2 p-3 pb-2 relative">
             <div v-if="s.label.title">
@@ -114,23 +116,32 @@
             <transition-group>
               <li v-for="(s, i) in listable" :key="i + 0" class="reorder__tag text-sm mb-1 px-2 py-1 pb-2 text-white">
 
-                  <div v-if="s.label.title">
-                    <div class="inline-block w-16 pr-2" v-if="s.label.img">
-                      <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code">
-                    </div>
-                    <div class="inline-block w-10/12 align-top">
-                      <span class="whitespace-no-wrap text-gray-900 text-sm font-medium">{{ s.label.title }}</span><br>
-                      <span class="whitespace-no-wrap mt-1 text-gray-500 text-xs">{{ s.label.url }}</span><br>
-                      <span class="whitespace-no-wrap mt-1 text-gray-500 text-sm">{{ s.label.code }}</span>
-                    </div>
+                <div v-if="s.label.title">
+                  <div class="inline-block w-16 pr-2" v-if="s.label.img">
+                    <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code">
                   </div>
-                  <span v-else>
+                  <div class="inline-block w-10/12 align-top">
+                    <span class="whitespace-no-wrap text-gray-900 text-sm font-medium">{{ s.label.title }}</span><br>
+                    <span class="whitespace-no-wrap mt-1 text-gray-500 text-xs">{{ s.label.url }}</span><br>
+                    <span class="whitespace-no-wrap mt-1 text-gray-500 text-sm">{{ s.label.code }}</span>
+                  </div>
+                </div>
+                <span v-else>
                   {{ s.label }}
                   </span>
               </li>
             </transition-group>
           </vue-draggable>
         </div>
+
+
+        <!-- csv import -->
+        <form v-if="field.activeImport" enctype="multipart/form-data" class="import-container">
+          <input  type="file" :id="fileid" name="name" class="form-file-input select-none" @change="handleFile" ref="file">
+          <label :for="fileid" class="form-file-btn btn btn-default btn-primary select-none">
+            <span>Elegir archivo</span>
+          </label>
+        </form>
       </div>
     </template>
   </default-field>
@@ -159,12 +170,17 @@ export default {
     isLoading: false,
     isInitialized: false,
     listable : [],
-    listed: false
+    listed: false,
+    importLog: [],
+    file: '',
+    fileinput: '',
+    fileid: ''
   }),
 
   mounted() {
     window.addEventListener('scroll', this.repositionDropdown);
 
+    this.fileid = 'input-${this.safeDependsOnAttribute}-file';
     if (this.field.dependsOn) {
       this.options = [];
 
@@ -252,6 +268,79 @@ export default {
   },
 
   methods: {
+    // start csv import
+    fetchServerData: async function(search) {
+
+      console.log('fetchServerData', search);
+
+       const { data } = await Nova.request().post(`${this.field.apiImportUrl}`, { codes: search });
+
+      // Response is not an array or an object
+      if (typeof data !== 'object') throw new Error('Server response was invalid.');
+
+      // Is array
+      if (Array.isArray(data)) {
+        this.importLog.push("Error en la búsqueda");
+        return;
+      }
+
+      // Nova resource response
+      if (data) {
+        console.log(data);
+
+        var vm = this;
+        _.forEach(data,function (label, value) {
+          vm.handleSelect({ value, label }, null);
+        })
+      }
+
+      return;
+    },
+
+    importContentToList: function(dataList) {
+      let importCalls = 0;
+      let productList = [];
+      dataList.forEach( function(val, idx) {
+        if (idx == 0) {
+          this.importLog.push("Detectada cabecera " + val);
+        } else {
+          if (val.length) {
+            // this.fetchServerData(val.trim());
+            productList.push(val.trim());
+            importCalls++;
+          }
+        }
+      }, this);
+      this.fetchServerData(productList);
+      this.importLog.push("Buscando " + importCalls + " productos");
+    },
+
+    handleFile: function (event) {
+      // debugger;
+      var file = this.$refs.file.files[0];
+
+      let promise = new Promise((resolve, reject) => {
+        var reader = new FileReader();
+        var vm = this;
+        reader.onload = e => {
+          resolve((vm.fileinput = reader.result));
+        };
+        reader.readAsText(file);
+      });
+
+      promise.then(
+        result => {
+          // handle a successful result
+          this.importContentToList(this.fileinput.split('\n'));
+        },
+        error => {
+          // handle an error
+          console.log(error);
+        }
+      );
+    },
+    // end csv import
+
     setInitialValue() {
       if (this.isMultiselect) {
         const valuesArray = this.getInitialFieldValuesArray();
@@ -294,7 +383,7 @@ export default {
         this.value = value;
       }
 
-      this.$nextTick(() => this.repositionDropdown());2298
+      this.$nextTick(() => this.repositionDropdown());
       Nova.$emit(`nts-multiselect-${this.field.attribute}-input`, this.value);
     },
 
@@ -440,7 +529,19 @@ export default {
 </script>
 
 <style lang="scss">
+.import-container {
+  position: absolute;
+  top: 0px;
+  right:  0px;
+}
+
+.multiselect.import {
+  width: 75% !important;
+}
+
 .multiselect-field {
+  position: relative;
+
   .reorder__tag {
     background: #41b883;
     border-radius: 5px;
