@@ -4,66 +4,77 @@
 
       <div class="multiselect-field flex flex-col" :class="">
         <!-- Multi select field -->
-        <multiselect
-          v-if="!reorderMode"
-          @input="handleChange"
-          @open="handleOpen"
-          @search-change="tryToFetchOptions"
-          @select="handleSelect"
-          track-by="value"
-          label="label"
-          :group-label="isOptionGroups ? 'label' : void 0"
-          :group-values="isOptionGroups ? 'values' : void 0"
-          :group-select="field.groupSelect || false"
-          ref="multiselect"
-          :value="selected"
-          :options="field.apiUrl ? asyncOptions : computedOptions"
-          :internal-search="!field.apiUrl"
-          :class="field.activeImport?'import':''"
-          :disabled="isReadonly"
-          :placeholder="field.placeholder || field.name"
-          :close-on-select="field.max === 1 || !isMultiselect"
-          :multiple="isMultiselect"
-          :max="max || field.max || null"
-          :optionsLimit="field.optionsLimit || 1000"
-          :limitText="count => __('novaMultiselect.limitText', { count: String(count || '') })"
-          selectLabel=""
-          :loading="isLoading"
-          selectGroupLabel=""
-          selectedLabel=""
-          deselectLabel=""
-          deselectGroupLabel=""
-          :clearOnSelect="field.clearOnSelect || false"
-        >
-          <template slot="maxElements">
-            {{ __('novaMultiselect.maxElements', { max: String(field.max || '') }) }}
-          </template>
 
-          <template slot="noResult">
-            {{ __('novaMultiselect.noResult') }}
-          </template>
+        <div>
+            <multiselect
+            v-if="!reorderMode"
+            @input="handleChange"
+            @open="handleOpen"
+            @search-change="tryToFetchOptions"
+            @select="handleSelect"
+            track-by="value"
+            label="label"
+            :group-label="isOptionGroups ? 'label' : void 0"
+            :group-values="isOptionGroups ? 'values' : void 0"
+            :group-select="field.groupSelect || false"
+            ref="multiselect"
+            :value="selected"
+            :options="field.apiUrl ? asyncOptions : computedOptions"
+            :internal-search="!field.apiUrl"
+            :class="field.activeImport?'import':''"
+            :disabled="isReadonly"
+            :placeholder="field.placeholder || field.name"
+            :close-on-select="field.max === 1 || !isMultiselect"
+            :multiple="isMultiselect"
+            :max="max || field.max || null"
+            :optionsLimit="field.optionsLimit || 1000"
+            :limitText="count => __('novaMultiselect.limitText', { count: String(count || '') })"
+            selectLabel=""
+            :loading="isLoading"
+            selectGroupLabel=""
+            selectedLabel=""
+            deselectLabel=""
+            deselectGroupLabel=""
+            :clearOnSelect="field.clearOnSelect || false"
+          >
 
-          <template slot="noOptions">
-            {{ field.apiUrl ? __('novaMultiSelect.startTypingForOptions') : __('novaMultiselect.noOptions') }}
-          </template>
+            <template slot="maxElements">
+              {{ __('novaMultiselect.maxElements', { max: String(field.max || '') }) }}
+            </template>
 
-          <template slot="clear">
-            <div
-              class="multiselect__clear"
-              v-if="field.nullable && (isMultiselect ? value.length : value)"
-              @mousedown.prevent.stop="value = isMultiselect ? [] : null"
-            ></div>
-          </template>
-          <template slot="singleLabel" slot-scope="props">
-            <nitsnets-multiselect-option :field="field" :value="props.option"/>
-          </template>
-          <template slot="option" slot-scope="props">
-            <nitsnets-multiselect-option :field="field" :value="props.option"/>
-          </template>
-          <template slot="search" slot-scope="props">
-            <nitsnets-multiselect-option :field="field" :value="props.option"/>
-          </template>
-        </multiselect>
+            <template slot="noResult">
+              {{ __('novaMultiselect.noResult') }}
+            </template>
+
+            <template slot="noOptions">
+              {{ field.apiUrl ? __('novaMultiSelect.startTypingForOptions') : __('novaMultiselect.noOptions') }}
+            </template>
+
+            <template slot="clear">
+              <div
+                class="multiselect__clear"
+                v-if="field.nullable && (isMultiselect ? value.length : value)"
+                @mousedown.prevent.stop="value = isMultiselect ? [] : null"
+              ></div>
+            </template>
+            <template slot="singleLabel" slot-scope="props">
+              <nitsnets-multiselect-option :field="field" :value="props.option"/>
+            </template>
+            <template slot="option" slot-scope="props">
+              <nitsnets-multiselect-option :field="field" :value="props.option"/>
+            </template>
+            <template slot="search" slot-scope="props">
+              <nitsnets-multiselect-option :field="field" :value="props.option"/>
+            </template>
+          </multiselect>
+          <!-- csv import -->
+          <form v-if="field.activeImport" enctype="multipart/form-data" class="import-container">
+            <input  type="file" :id="fileid" name="name" class="form-file-input select-none" @change="handleFile" ref="file">
+            <label :for="fileid" class="form-file-btn btn btn-default btn-primary select-none">
+              <span>Elegir archivo</span>
+            </label>
+          </form>
+        </div>
 
         <!-- Reorder mode field -->
         <div v-if="reorderMode && !field.listed" class="form-input-bordered py-1">
@@ -83,6 +94,7 @@
         >
           {{ __(reorderMode ? 'novaMultiselect.doneReordering' : 'novaMultiselect.reorder') }}
         </div>
+        <>
 
         <!-- item's list -->
         <div v-if="listed && !reorderMode" class="py-2">
@@ -143,15 +155,6 @@
             </transition-group>
           </vue-draggable>
         </div>
-
-
-        <!-- csv import -->
-        <form v-if="field.activeImport" enctype="multipart/form-data" class="import-container">
-          <input  type="file" :id="fileid" name="name" class="form-file-input select-none" @change="handleFile" ref="file">
-          <label :for="fileid" class="form-file-btn btn btn-default btn-primary select-none">
-            <span>Elegir archivo</span>
-          </label>
-        </form>
       </div>
     </template>
   </default-field>
