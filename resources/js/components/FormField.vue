@@ -94,7 +94,6 @@
         >
           {{ __(reorderMode ? 'novaMultiselect.doneReordering' : 'novaMultiselect.reorder') }}
         </div>
-        <>
 
         <!-- item's list -->
         <div v-if="listed && !reorderMode" class="py-2">
