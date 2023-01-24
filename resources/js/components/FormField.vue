@@ -2,7 +2,7 @@
   <default-field :field="field" :showHelpText="showHelpText" :errors="errors">
     <template slot="field">
 
-      <div class="multiselect-field flex flex-col" :class="">
+      <div class="nts-multiselect-field flex flex-col" :class="">
         <!-- Multi select field -->
 
         <div>
@@ -17,7 +17,8 @@
             :group-label="isOptionGroups ? 'label' : void 0"
             :group-values="isOptionGroups ? 'values' : void 0"
             :group-select="field.groupSelect || false"
-            ref="multiselect"
+            :ref="`multiselect-${resourceId}`"
+            :id="resourceId"
             :value="selected"
             :options="field.apiUrl ? asyncOptions : computedOptions"
             :internal-search="!field.apiUrl"
@@ -276,7 +277,7 @@ export default {
       const flexibleKey = this.flexibleKey;
       if (!flexibleKey) return this.field.dependsOn;
       return `${flexibleKey}__${this.field.dependsOn}`;
-    },
+    }
   },
 
   methods: {
@@ -479,11 +480,11 @@ export default {
 
       // Response is not an array or an object
       if (typeof data !== 'object') throw new Error('Server response was invalid.');
-
       // Is array
       if (Array.isArray(data)) {
         this.asyncOptions = data;
         this.isLoading = false;
+        console.log(this.asyncOptions);
         return;
       }
 
@@ -503,6 +504,7 @@ export default {
       }
 
       this.asyncOptions = Object.entries(data).map(entry => ({ label: entry[1], value: entry[0] }));
+      console.log(this.asyncOptions);
       this.isLoading = false;
     }, 500),
 

@@ -123,8 +123,6 @@ class Multiselect extends Field
     public function apiImport($path)
     {
         if (empty($path)) throw new Exception('Multiselect requires apiImportUrl, none provided.');
-
-        \Log::error($path);
         return $this->withMeta(['apiImportUrl' => $path]);
     }
 
