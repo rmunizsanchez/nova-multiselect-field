@@ -435,6 +435,11 @@ class Multiselect extends Field
         return $this;
     }
 
+    /**
+     * Allow to add some html after the main input
+     * @param $html
+     * @return mixed
+     */
     public function setHtmlAfterInput($html)
     {
         return $this->withMeta(['htmlAfterInput' => $html]);
