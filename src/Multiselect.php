@@ -435,6 +435,11 @@ class Multiselect extends Field
         return $this;
     }
 
+    public function setHtmlAfterInput($html)
+    {
+        return $this->withMeta(['htmlAfterInput' => $html]);
+    }
+
     public function __construct($name, $attribute = null, callable $resolveCallback = null)
     {
         parent::__construct($name, $attribute, $resolveCallback);

@@ -2,7 +2,7 @@
   <default-field :field="field" :showHelpText="showHelpText" :errors="errors">
     <template slot="field">
 
-      <div class="nts-multiselect-field flex flex-col" :class="">
+      <div class="nts-multiselect-field flex flex-col relative" :class="">
         <!-- Multi select field -->
 
         <div>
@@ -95,6 +95,11 @@
         >
           {{ __(reorderMode ? 'novaMultiselect.doneReordering' : 'novaMultiselect.reorder') }}
         </div>
+
+        <template v-if="field.htmlAfterInput">
+          <div class="p3" v-html="this.field.htmlAfterInput"></div>
+        </template>
+
 
         <!-- item's list -->
         <div v-if="listed && !reorderMode" class="py-2">
