@@ -72,7 +72,7 @@
           <form v-if="field.activeImport" enctype="multipart/form-data" class="import-container">
             <input  type="file" :id="fileid" name="name" class="form-file-input select-none" @change="handleFile" ref="file">
             <label :for="fileid" class="form-file-btn btn btn-default btn-primary select-none">
-              <span>Elegir archivo</span>
+              <span>Select File</span>
             </label>
           </form>
         </div>
