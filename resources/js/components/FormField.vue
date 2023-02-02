@@ -89,7 +89,7 @@
         </div>
 
         <div
-          v-if="field.reorderable"
+          v-if="field.reorderable && listed"
           class="ml-auto mt-2 text-sm font-bold text-primary cursor-pointer dim"
           @click="reorderMode = !reorderMode"
         >
