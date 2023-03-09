@@ -530,6 +530,11 @@ export default {
     },
     handleSelect(selected,id) {
       if (this.isMultiselect) {
+        console.log(this.field.max);
+        console.log(this.listable.length);
+        if (this.field.max >= this.listable.length) {
+          this.listable.pop();
+        }
         if (this.listable.findIndex(function (o) {
           return o.value === selected.value
         }) === -1) {
