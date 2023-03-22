@@ -72,7 +72,7 @@
           <form v-if="field.activeImport" enctype="multipart/form-data" class="import-container">
             <input  type="file" :id="fileid" name="name" class="form-file-input select-none" @change="handleFile" ref="file">
             <label :for="fileid" class="form-file-btn btn btn-default btn-primary select-none">
-              <span>Select File</span>
+              <span>Import</span>
             </label>
           </form>
         </div>
@@ -560,7 +560,7 @@ export default {
 }
 
 .multiselect.import {
-  width: 75% !important;
+  width: 80% !important;
 }
 
 .multiselect-field {
