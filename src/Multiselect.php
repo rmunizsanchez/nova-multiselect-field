@@ -97,7 +97,6 @@ class Multiselect extends Field
                     $value = collect($value)->flatten(1)->toArray();
                 }
 
-
                 try {
                     $modelObj = $resourceClass::newModel();
                     $models = $modelObj::whereIn($modelObj->getKeyName(), $value)->get();
@@ -114,7 +113,7 @@ class Multiselect extends Field
         return $this->withMeta(['apiUrl' => $path, 'labelKey' => $resourceClass::$title]);
     }
 
-     /**
+    /**
      * @ param      $path
      *
      * @ return \Nitsnets\MultiselectField\Multiselect
@@ -437,6 +436,7 @@ class Multiselect extends Field
 
     /**
      * Allow to add some html after the main input
+     *
      * @param $html
      * @return mixed
      */
@@ -444,6 +444,21 @@ class Multiselect extends Field
     {
         return $this->withMeta(['htmlAfterInput' => $html]);
     }
+
+    /**
+     * Sort Async Options By the given value and order.
+     *
+     * @param $html
+     * @return mixed
+     */
+    public function sortAsyncOptionsBy(string $value, string $order = 'asc')
+    {
+        return $this->withMeta([
+            'sortAsyncOptionsByValue' => $value,
+            'sortAsyncOptionsByOrder' => $order
+        ]);
+    }
+
 
     public function __construct($name, $attribute = null, callable $resolveCallback = null)
     {
