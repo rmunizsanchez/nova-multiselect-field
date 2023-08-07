@@ -4,9 +4,8 @@
 
       <div class="nts-multiselect-field flex flex-col relative" :class="">
         <!-- Multi select field -->
-
         <div>
-            <multiselect
+          <multiselect
             v-if="!reorderMode"
             @input="handleChange"
             @open="handleOpen"
@@ -133,33 +132,32 @@
                 </i>
               </div>
             </div>
-            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Reorder mode field -->
-        <div v-if="reorderMode && listed" class="form-input-bordered py-1">
-          <vue-draggable tag="ul" v-model="listable" class="flex flex-col pl-0" style="list-style: none; margin-top: 5px">
-            <transition-group>
-              <li v-for="(s, i) in listable" :key="i + 0" class="reorder__tag text-sm mb-1 px-2 py-1 pb-2 text-white">
+      <!-- Reorder mode field -->
+      <div v-if="reorderMode && listed" class="form-input-bordered py-1">
+        <vue-draggable tag="ul" v-model="listable" class="flex flex-col pl-0" style="list-style: none; margin-top: 5px">
+          <transition-group>
+            <li v-for="(s, i) in listable" :key="i + 0" class="reorder__tag text-sm mb-1 px-2 py-1 pb-2 text-white">
 
-                <div v-if="s.label.title">
-                  <div class="inline-block w-16 pr-2" v-if="s.label.img">
-                    <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code">
-                  </div>
-                  <div class="inline-block w-10/12 align-top">
-                    <span class="whitespace-no-wrap text-gray-900 text-sm font-medium">{{ s.label.title }}</span><br>
-                    <span class="whitespace-no-wrap mt-1 text-gray-500 text-xs">{{ s.label.url }}</span><br>
-                    <span class="whitespace-no-wrap mt-1 text-gray-500 text-sm">{{ s.label.code }}</span>
-                  </div>
+              <div v-if="s.label.title">
+                <div class="inline-block w-16 pr-2" v-if="s.label.img">
+                  <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code">
                 </div>
-                <span v-else>
+                <div class="inline-block w-10/12 align-top">
+                  <span class="whitespace-no-wrap text-gray-900 text-sm font-medium">{{ s.label.title }}</span><br>
+                  <span class="whitespace-no-wrap mt-1 text-gray-500 text-xs">{{ s.label.url }}</span><br>
+                  <span class="whitespace-no-wrap mt-1 text-gray-500 text-sm">{{ s.label.code }}</span>
+                </div>
+              </div>
+              <span v-else>
                   {{ s.label }}
                   </span>
-              </li>
-            </transition-group>
-          </vue-draggable>
-        </div>
+            </li>
+          </transition-group>
+        </vue-draggable>
       </div>
     </template>
   </default-field>
@@ -291,7 +289,7 @@ export default {
 
       console.log('fetchServerData', search);
 
-       const { data } = await Nova.request().post(`${this.field.apiImportUrl}`, { codes: search });
+      const { data } = await Nova.request().post(`${this.field.apiImportUrl}`, { codes: search });
 
       // Response is not an array or an object
       if (typeof data !== 'object') throw new Error('Server response was invalid.');
@@ -509,7 +507,22 @@ export default {
       }
 
       this.asyncOptions = Object.entries(data).map(entry => ({ label: entry[1], value: entry[0] }));
-      console.log(this.asyncOptions);
+
+      if (this.field.sortAsyncOptionsByValue !== undefined) {
+        var sortBy = this.field.sortAsyncOptionsByValue;
+        var sortType = this.field.sortAsyncOptionsByOrder;
+
+        if (sortType === 'asc') {
+          this.asyncOptions.sort(function(a, b) {
+            return a.label[sortBy].length - b.label[sortBy].length;
+          });
+        } else {
+          this.asyncOptions.sort(function(a, b) {
+            return b.label[sortBy].length - a.label[sortBy].length;
+          });
+        }
+      }
+
       this.isLoading = false;
     }, 500),
 
@@ -533,7 +546,7 @@ export default {
         console.log(this.field.max);
         console.log(this.listable.length);
         if (this.listable.length >= this.field.max) {
-            this.listable.pop();
+          this.listable.pop();
         }
         if (this.listable.findIndex(function (o) {
           return o.value === selected.value
