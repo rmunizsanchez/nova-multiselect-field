@@ -198,7 +198,7 @@ export default {
   mounted() {
     window.addEventListener('scroll', this.repositionDropdown);
 
-    this.fileid = 'input-${this.safeDependsOnAttribute}-file';
+    this.fileid = `input-${this.safeDependsOnAttribute}-file`;
     if (this.field.dependsOn) {
       this.options = [];
 
