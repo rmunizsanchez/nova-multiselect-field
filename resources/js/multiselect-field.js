@@ -1,7 +1,6 @@
 import 'viewerjs/dist/viewer.css';
 import Viewer from 'v-viewer';
 Nova.booting((Vue, router, store) => {
-  Nova.use(Viewer);
   Nova.component('index-nitsnets-multiselect-field', require('./components/IndexField').default);
   Nova.component('detail-nitsnets-multiselect-field', require('./components/DetailField').default);
   Nova.component('form-nitsnets-multiselect-field', require('./components/FormField').default);
