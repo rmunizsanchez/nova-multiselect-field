@@ -18,9 +18,7 @@
               </svg>
             </i>
           </div>
-        <span v-else>
-            {{ value.label }}
-          </span>
+
       </div>
   </div>
 
