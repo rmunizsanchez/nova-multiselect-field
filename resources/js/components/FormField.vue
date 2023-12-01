@@ -2,7 +2,7 @@
   <default-field :field="field" :showHelpText="showHelpText" :errors="errors">
     <template slot="field">
 
-      <div class="nts-multiselect-field flex flex-col relative" :class="">
+      <div class="nts-multiselect-field flex flex-col relative" >
         <!-- Multi select field -->
         <div>
           <multiselect

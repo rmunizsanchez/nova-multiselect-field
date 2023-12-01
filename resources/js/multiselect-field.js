@@ -6,13 +6,6 @@ Nova.booting((Vue, router, store) => {
   Nova.component('form-nitsnets-multiselect-field', require('./components/FormField').default);
   Nova.component('nitsnets-multiselect-option', require('./components/MultiselectOption').default);
   Nova.component('nitsnets-listed-option', require('./components/ListedOption').default);
-  // Allow user to overwrite nova-multiselect-detail-field-value
-  if (!Nova.options.components['nova-nitsnets-multiselect-detail-field-value']) {
-    Nova.component(
-      'nova-nitsnets-multiselect-detail-field-value',
-      require('./components/NovaMultiselectDetailFieldValue').default
-    );
-  }
 
   Nova.component(
     'nova-nitsnets-multiselect-detail-one-field-value',
