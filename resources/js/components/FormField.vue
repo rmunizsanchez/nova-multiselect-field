@@ -3,11 +3,13 @@
     <template #field>
       <div class="outl1ne-multiselect-field flex flex-col">
         <!-- Multi select field -->
+        <div>
         <multiselect
           v-if="!reorderMode"
           @input="handleChange"
           @open="handleOpen"
           @search-change="tryToFetchOptions"
+          @select="handleSelect"
           track-by="value"
           label="label"
           :group-label="isOptionGroups ? 'label' : void 0"
@@ -58,13 +60,26 @@
           </template>
 
           <template #singleLabel>
-            <span>{{ value ? value.label : '' }}</span>
+            <span>aasasdasd{{ value ? value.label : '' }}</span>
+          </template>
+
+
+          <template #option="{ option }">
+            <nitsnets-listed-option :value="option"></nitsnets-listed-option>
           </template>
 
           <template #tag="{ option, remove }">
             <form-multiselect-field-tag :option="option" :remove="remove" />
           </template>
         </multiselect>
+          <!-- csv import -->
+          <form v-if="currentField.activeImport" enctype="multipart/form-data" class="import-container">
+            <input  type="file" :id="fileid" name="name" class="form-file-input select-none" @change="handleFile" ref="file">
+            <label :for="fileid" class="form-file-btn btn btn-default btn-primary select-none">
+              <span>Import</span>
+            </label>
+          </form>
+        </div>
 
         <!-- Reorder mode field -->
         <div v-if="reorderMode" class="form-input-bordered py-1 px-2 rounded-lg">
@@ -86,6 +101,70 @@
         >
           {{ __(reorderMode ? 'novaMultiselect.doneReordering' : 'novaMultiselect.reorder') }}
         </div>
+
+        <template v-if="currentField.htmlAfterInput">
+          <div class="p3" v-html="this.currentField.htmlAfterInput"></div>
+        </template>
+
+
+        <!-- item's list -->
+        <div v-if="currentField.listed" class="py-2">
+          <div v-for="(s, i) in listable" class="block form-input-bordered mb-2 p-3 pb-2 relative">
+            <div v-if="s.label.title">
+              <div class="inline-block w-16 pr-2" v-if="s.label.img">
+                <img v-viewer class="w-auto" :src="s.label.img" :alt="s.label.code">
+              </div>
+              <div class="inline-block w-10/12 align-top">
+                <span class="whitespace-no-wrap text-gray-900 text-sm font-medium">{{ s.label.title }}</span><br>
+                <span class="whitespace-no-wrap mt-1 text-gray-500 text-xs">{{ s.label.url }}</span><br>
+                <span class="whitespace-no-wrap mt-1 text-gray-500 text-sm">{{ s.label.code }}</span>
+              </div>
+              <div class="absolute top-3 right-3">
+                <i class="cursor-pointer" v-on:click="removeList(i)">
+                  <svg class="w-4" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </i>
+              </div>
+            </div>
+            <div v-else>
+              <div class="inline-block w-10/12 align-top">
+                <span class="whitespace-no-wrap text-gray-900 text-sm font-medium">{{ s.label }}</span><br>
+              </div>
+              <div class="absolute top-3 right-3">
+                <i class="cursor-pointer" v-on:click="removeList(i)">
+                  <svg class="w-4" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reorder mode field -->
+      <div v-if="reorderMode && listed" class="form-input-bordered py-1">
+        <vue-draggable tag="ul" v-model="listable" class="flex flex-col pl-0" style="list-style: none; margin-top: 5px">
+          <transition-group>
+            <li v-for="(s, i) in listable" :key="i + 0" class="reorder__tag text-sm mb-1 px-2 py-1 pb-2 text-white">
+
+              <div v-if="s.label.title">
+                <div class="inline-block w-16 pr-2" v-if="s.label.img">
+                  <img v-viewer class="w-auto"  :src="s.label.img" :alt="s.label.code">
+                </div>
+                <div class="inline-block w-10/12 align-top">
+                  <span class="whitespace-no-wrap text-gray-900 text-sm font-medium">{{ s.label.title }}</span><br>
+                  <span class="whitespace-no-wrap mt-1 text-gray-500 text-xs">{{ s.label.url }}</span><br>
+                  <span class="whitespace-no-wrap mt-1 text-gray-500 text-sm">{{ s.label.code }}</span>
+                </div>
+              </div>
+              <span v-else>
+                  {{ s.label }}
+                  </span>
+            </li>
+          </transition-group>
+        </vue-draggable>
       </div>
     </template>
   </DefaultField>
@@ -113,6 +192,12 @@ export default {
     distinctValues: [],
     isLoading: false,
     isInitialized: false,
+    listable : [],
+    listed: false,
+    importLog: [],
+    file: '',
+    fileinput: '',
+    fileid: ''
   }),
 
   mounted() {
@@ -174,7 +259,9 @@ export default {
         return callback(this.value);
       });
     }
-
+    if (this.currentField.listed) {
+      this.listed = true
+    }
     // Emit initial value
     this.$nextTick(() => {
       Nova.$emit(`multiselect-${this.field.attribute}-input`, this.value);
@@ -209,21 +296,103 @@ export default {
   },
 
   methods: {
+    // start csv import
+    fetchServerData: async function(search) {
+
+      console.log('fetchServerData', search);
+
+      const { data } = await Nova.request().post(`${this.field.apiImportUrl}`, { codes: search });
+
+      // Response is not an array or an object
+      if (typeof data !== 'object') throw new Error('Server response was invalid.');
+
+      // Is array
+      if (Array.isArray(data)) {
+        this.importLog.push("Error en la búsqueda");
+        return;
+      }
+
+      // Nova resource response
+      if (data) {
+        console.log(data);
+
+        var vm = this;
+        _.forEach(data,function (label, value) {
+          vm.handleSelect({ value, label }, null);
+        })
+      }
+
+      return;
+    },
+
+    importContentToList: function(dataList) {
+      let importCalls = 0;
+      let productList = [];
+      dataList.forEach( function(val, idx) {
+        if (idx == 0) {
+          this.importLog.push("Detectada cabecera " + val);
+        } else {
+          if (val.length) {
+            // this.fetchServerData(val.trim());
+            productList.push(val.trim());
+            importCalls++;
+          }
+        }
+      }, this);
+      this.fetchServerData(productList);
+      this.importLog.push("Buscando " + importCalls + " productos");
+    },
+
+    handleFile: function (event) {
+      // debugger;
+      var file = this.$refs.file.files[0];
+
+      let promise = new Promise((resolve, reject) => {
+        var reader = new FileReader();
+        var vm = this;
+        reader.onload = e => {
+          resolve((vm.fileinput = reader.result));
+        };
+        reader.readAsText(file);
+      });
+
+      promise.then(
+        result => {
+          // handle a successful result
+          this.importContentToList(this.fileinput.split('\n'));
+        },
+        error => {
+          // handle an error
+          console.log(error);
+        }
+      );
+    },
+    // end csv import
+
     setInitialValue() {
       if (this.isMultiselect) {
         const valuesArray = this.getInitialFieldValuesArray();
-        this.value = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
+          if (this.currentField.listed) {
+            this.listable = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
+          } else {
+            this.value = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
+          }
       } else {
-        this.value = this.getValueFromOptions(this.currentField.value);
+        if (this.currentField.listed) {
+          this.listable = this.getValueFromOptions(this.currentField.value);
+        } else {
+          this.value = this.getValueFromOptions(this.currentField.value);
+        }
       }
-
       // Emit new value so fields down the line also get refreshed
-      this.currentField.value = !this.value ? '' : this.isMultiselect ? this.value.map(v => v.value) : this.value.value;
+//      this.currentField.value = !this.value ? '' : this.isMultiselect ? this.value.map(v => v.value) : this.value.value;
     },
 
     fillIfVisible(formData, attribute) {
       if (!this.currentlyIsVisible) return;
-
+      if (this.listed) {
+        this.value = this.listable;
+      }
       if (this.isMultiselect) {
         if (this.value && this.value.length) {
           this.value.forEach((v, i) => {
@@ -247,7 +416,11 @@ export default {
         if (value && !value.value) return;
       }
 
-      this.value = value;
+      if (this.listed) {
+        this.value = [];
+      } else {
+        this.value = value;
+      }
       this.$nextTick(() => this.repositionDropdown());
       Nova.$emit(`multiselect-${this.field.attribute}-input`, this.value);
       this.emitFieldValueChange(
@@ -367,11 +540,11 @@ export default {
 
       // Response is not an array or an object
       if (typeof data !== 'object') throw new Error('Server response was invalid.');
-
       // Is array
       if (Array.isArray(data)) {
         this.asyncOptions = data;
         this.isLoading = false;
+        console.log(this.asyncOptions);
         return;
       }
 
@@ -414,6 +587,26 @@ export default {
       this.options = this.currentField.options || [];
       this.setInitialValue();
     },
+    handleSelect(selected,id) {
+      if (this.isMultiselect) {
+        console.log(this.field.max);
+        console.log(this.listable.length);
+        if (this.listable.length >= this.field.max) {
+          this.listable.pop();
+        }
+        if (this.listable.findIndex(function (o) {
+          return o.value === selected.value
+        }) === -1) {
+          this.listable.push(selected)
+        }
+      } else {
+        this.listable = [];
+        this.listable.push(selected)
+      }
+    },
+    removeList(id) {
+      this.listable.splice(id, 1);
+    }
   },
 };
 </script>

@@ -1,3 +1,5 @@
+import 'viewerjs/dist/viewer.css';
+import Viewer from 'v-viewer';
 // Fix vue-draggable being stupid
 window.Vue.component = () => false;
 
@@ -12,6 +14,7 @@ const handleDarkMode = () => {
   }
 };
 
+
 Nova.booting((Vue, store) => {
   handleDarkMode();
   new MutationObserver(handleDarkMode).observe(document.documentElement, {
@@ -23,6 +26,10 @@ Nova.booting((Vue, store) => {
   Vue.component('index-multiselect-field', require('./components/IndexField').default);
   Vue.component('detail-multiselect-field', require('./components/DetailField').default);
   Vue.component('form-multiselect-field', require('./components/FormField').default);
+  Vue.component('nitsnets-listed-option', require('./components/ListedOption').default);
+  Vue.component('nitsnets-multiselect-option', require('./components/MultiselectOption').default);
+
+
 
   // Allow user to overwrite form-multiselect-field-tag
   if (!Vue._context.components['form-multiselect-field-tag']) {

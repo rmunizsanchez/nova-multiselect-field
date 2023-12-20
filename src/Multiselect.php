@@ -13,7 +13,8 @@ use Outl1ne\MultiselectField\Traits\MultiselectBelongsToSupport;
 
 class Multiselect extends Field implements RelatableField
 {
-    use MultiselectBelongsToSupport, SupportsDependentFields;
+    use MultiselectBelongsToSupport;
+    use SupportsDependentFields;
 
     public $component = 'multiselect-field';
 
@@ -27,14 +28,20 @@ class Multiselect extends Field implements RelatableField
      * @param  array|callable
      * @return \Outl1ne\MultiselectField\Multiselect
      **/
-    public function options($options = [])
+    public function options($options = [], $grouped = true)
     {
-        if (is_callable($options)) $options = call_user_func($options);
+        if (is_callable($options)) {
+            $options = call_user_func($options);
+        }
         $options = collect($options ?: []);
 
-        $isOptionGroup = $options->contains(function ($label, $value) {
-            return is_array($label);
-        });
+        if ($grouped) {
+            $isOptionGroup = $options->contains(function ($label, $value) {
+                return is_array($label);
+            });
+        } else {
+            $isOptionGroup = false;
+        }
 
         if ($isOptionGroup) {
             $_options = $options
@@ -51,7 +58,6 @@ class Multiselect extends Field implements RelatableField
             return $this->withMeta(['options' => $_options]);
         }
 
-
         return $this->withMeta([
             'options' => $options->map(function ($label, $value) {
                 return ['label' => $label, 'value' => $value];
@@ -59,50 +65,58 @@ class Multiselect extends Field implements RelatableField
         ]);
     }
 
-    public function api($path, $resourceClass, $keyName = null)
+    public function api($path, $resourceClass, $keyName = null, $resolving = true)
     {
-        if (empty($resourceClass)) throw new Exception('Multiselect requires resourceClass, none provided.');
-        if (empty($path)) throw new Exception('Multiselect requires apiUrl, none provided.');
+        if (empty($resourceClass)) {
+            throw new Exception('Multiselect requires resourceClass, none provided.');
+        }
+        if (empty($path)) {
+            throw new Exception('Multiselect requires apiUrl, none provided.');
+        }
 
         $this->resourceKeyName($keyName);
         $this->resourceClass = $resourceClass;
 
-        $this->resolveUsing(function ($value) use ($resourceClass) {
-            $request = app()->make(NovaRequest::class);
-            $model = $resourceClass::newModel();
+        if ($resolving) {
+            $this->resolveUsing(function ($value) use ($resourceClass) {
+                $request = app()->make(NovaRequest::class);
+                $model = $resourceClass::newModel();
 
-            $this->options([]);
-            $value = array_values($value instanceof Collection ? $value->toArray() : (array)$value);
+                $this->options([]);
+                $value = array_values($value instanceof Collection ? $value->toArray() : (array)$value);
 
-            if (empty($value)) {
-                $defaultValue = $this->resolveDefaultValue($request);
-                if (!$defaultValue || $defaultValue->isEmpty()) return $value;
+                if (empty($value)) {
+                    $defaultValue = $this->resolveDefaultValue($request);
+                    if (!$defaultValue || $defaultValue->isEmpty()) {
+                        return $value;
+                    }
 
-                $value = $defaultValue->pluck($this->keyName ?? $model->getKeyName())->unique()->filter()->values();
-            }
+                    $value = $defaultValue->pluck($this->keyName ?? $model->getKeyName())->unique()->filter()->values();
+                }
 
-            // Handle translatable/collection where values are an array of arrays
-            if (is_array($value) && is_array($value[0] ?? null)) {
-                $value = collect($value)->flatten(1)->toArray();
-            }
+                // Handle translatable/collection where values are an array of arrays
+                if (is_array($value) && is_array($value[0] ?? null)) {
+                    $value = collect($value)->flatten(1)->toArray();
+                }
 
-            try {
-                $models = $model::whereIn($this->keyName ?? $model->getKeyName(), $value)->get();
+                try {
+                    $models = $model::whereIn($this->keyName ?? $model->getKeyName(), $value)->get();
 
-                $this->setOptionsFromModels($models, $resourceClass);
-            } catch (Exception $e) {
-            }
+                    $this->setOptionsFromModels($models, $resourceClass);
+                } catch (Exception $e) {
+                }
 
-            return $value;
-        });
+                return $value;
+            });
+        }
 
         return $this->withMeta(['apiUrl' => $path, 'labelKey' => $resourceClass::$title]);
     }
 
-    public function asyncResource($resourceClass, $keyName = null)
+    public function asyncResource($resourceClass, $keyName = null, $resolving = true)
     {
         $apiUrl = "/nova-api/{$resourceClass::uriKey()}";
-        return $this->api($apiUrl, $resourceClass, $keyName);
+        return $this->api($apiUrl, $resourceClass, $keyName, $resolving);
     }
 
     protected function resolveAttribute($resource, $attribute)
@@ -111,8 +125,12 @@ class Multiselect extends Field implements RelatableField
         $value = data_get($resource, str_replace('->', '.', $attribute));
         $saveAsJson = $this->shouldSaveAsJson($resource, $attribute);
 
-        if ($value instanceof Collection) return $value;
-        if ($saveAsJson || $singleSelect) return $value;
+        if ($value instanceof Collection) {
+            return $value;
+        }
+        if ($saveAsJson || $singleSelect) {
+            return $value;
+        }
         return is_array($value) || is_object($value) ? (array) $value : json_decode($value);
     }
 
@@ -158,7 +176,9 @@ class Multiselect extends Field implements RelatableField
 
     public function resolveDefaultValue(NovaRequest $request)
     {
-        if (!$this->resourceClass || !is_null($this->value)) return parent::resolveDefaultValue($request);
+        if (!$this->resourceClass || !is_null($this->value)) {
+            return parent::resolveDefaultValue($request);
+        }
 
         if ($request->isCreateOrAttachRequest() || $request->isActionRequest()) {
             if ($this->defaultCallback instanceof Closure) {
@@ -167,13 +187,19 @@ class Multiselect extends Field implements RelatableField
                 $defaultValue = $this->defaultCallback;
             }
 
-            if (is_null($defaultValue)) return null;
+            if (is_null($defaultValue)) {
+                return null;
+            }
 
             $defaultValue = is_countable($defaultValue) ? collect($defaultValue) : collect([$defaultValue]);
             $defaultValue = $defaultValue->filter(function ($val) {
-                if (empty($val)) return false;
+                if (empty($val)) {
+                    return false;
+                }
                 if (is_object($val) && $class = get_class($val)) {
-                    if ($class === 'Laravel\Nova\Support\UndefinedValue') return false;
+                    if ($class === 'Laravel\Nova\Support\UndefinedValue') {
+                        return false;
+                    }
                 }
                 return true;
             });
@@ -181,9 +207,13 @@ class Multiselect extends Field implements RelatableField
 
             $model = $this->resourceClass::newModel();
             $defaultValue->each(function ($defaultValueItem) use ($model) {
-                if (!$defaultValueItem instanceof $model) throw new Exception('Invalid default value. Value should be a single model or an array/collection of models.');
+                if (!$defaultValueItem instanceof $model) {
+                    throw new Exception('Invalid default value. Value should be a single model or an array/collection of models.');
+                }
             });
-            if ($defaultValue->isEmpty()) return null;
+            if ($defaultValue->isEmpty()) {
+                return null;
+            }
 
             return $defaultValue;
         }
@@ -348,7 +378,9 @@ class Multiselect extends Field implements RelatableField
      **/
     public function distinct($group = "")
     {
-        if (empty($group)) $group = $this->attribute;
+        if (empty($group)) {
+            $group = $this->attribute;
+        }
         return $this->withMeta(['distinct' => $group]);
     }
 
@@ -434,4 +466,51 @@ class Multiselect extends Field implements RelatableField
     {
         return $this->withMeta(['asHtml' => true]);
     }
+
+
+
+    /* *
+     * Enable import from CSV files.
+     *
+     * @ param bool $activeImport
+     * @ return \Nitsnets\MultiselectField\Multiselect
+     **/
+
+    public function activeImport($activeImport = true)
+    {
+        return $this->withMeta(['activeImport' => $activeImport]);
+    }
+
+    /**
+     * @ param      $path
+     *
+     * @ return \Nitsnets\MultiselectField\Multiselect
+     * @ throws \Exception
+     * **/
+    public function apiImport($path)
+    {
+        if (empty($path)) throw new Exception('Multiselect requires apiImportUrl, none provided.');
+        return $this->withMeta(['apiImportUrl' => $path]);
+    }
+
+    /**
+     * @return \Nitsnets\MultiselectField\Multiselect
+     **/
+    public function showListed()
+    {
+        $this->withMeta(['listed' => true]);
+        return $this;
+    }
+
+    /**
+     * Allow to add some html after the main input
+     *
+     * @param $html
+     * @return mixed
+     */
+    public function setHtmlAfterInput($html)
+    {
+        return $this->withMeta(['htmlAfterInput' => $html]);
+    }
+
 }

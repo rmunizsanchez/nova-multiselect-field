@@ -1,6 +1,7 @@
 export default {
   data() {
     return {
+      options: [],
       isInitialized: true,
     };
   },
@@ -29,7 +30,6 @@ export default {
 
     getValueFromOptions(value) {
       let options = this.currentField.options || [];
-
       if (this.currentField.optionsDependOn) {
         const valueGroups = Object.values(this.currentField.optionsDependOnOptions || {});
         options = [];
